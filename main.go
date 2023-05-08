@@ -26,7 +26,15 @@ func main() {
 func archive() {
 	log.Printf("start archive at %s\n", time.Now().Format("2006-01-02 15:04:05"))
 
-	resp, err := http.Get("https://top.baidu.com/board?tab=realtime")
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://top.baidu.com/board?tab=realtime", nil)
+	if err != nil {
+		log.Printf("new request failed, err:%v\n", err)
+		return
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		log.Printf("get http reponse failed, err:%v\n", err)
 		return
@@ -45,8 +53,8 @@ func archive() {
 		return
 	}
 
-	os.Mkdir("archives", 0755)
-	name := fmt.Sprintf("archives/%s.txt", time.Now().Format("2006-01-02"))
+	os.MkdirAll("archives/baidu", 0755)
+	name := fmt.Sprintf("archives/baidu/%s.txt", time.Now().Format("2006-01-02"))
 	b, err = os.ReadFile(name)
 	if err != nil {
 		if !os.IsNotExist(err) {
@@ -84,6 +92,6 @@ func archive() {
 		return
 	}
 
-	log.Printf("archive %d new words\n", n)
+	log.Printf("archived %d new words\n", n)
 	log.Printf("finish archive at %s\n", time.Now().Format("2006-01-02 15:04:05"))
 }
