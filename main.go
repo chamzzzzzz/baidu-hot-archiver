@@ -28,20 +28,20 @@ func archive() {
 
 	resp, err := http.Get("https://top.baidu.com/board?tab=realtime")
 	if err != nil {
-		fmt.Printf("get http reponse failed, err:%v\n", err)
+		log.Printf("get http reponse failed, err:%v\n", err)
 		return
 	}
 	defer resp.Body.Close()
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("read body failed, err:%v\n", err)
+		log.Printf("read body failed, err:%v\n", err)
 		return
 	}
 
 	dom, err := supersimplesoup.Parse(bytes.NewReader(b))
 	if err != nil {
-		fmt.Printf("parse html failed, err:%v\n", err)
+		log.Printf("parse html failed, err:%v\n", err)
 		return
 	}
 
@@ -50,7 +50,7 @@ func archive() {
 	b, err = os.ReadFile(name)
 	if err != nil {
 		if !os.IsNotExist(err) {
-			fmt.Printf("read archive file failed, err:%v\n", err)
+			log.Printf("read archive file failed, err:%v\n", err)
 			return
 		}
 	}
@@ -80,7 +80,7 @@ func archive() {
 
 	err = os.WriteFile(name, []byte(strings.Join(words, "\r\n")), 0755)
 	if err != nil {
-		fmt.Printf("write archive file failed, err:%v\n", err)
+		log.Printf("write archive file failed, err:%v\n", err)
 		return
 	}
 
